@@ -1,8 +1,4 @@
 (function($) {
-	var jsonCallback = function(msg) {
-		alert(msg);
-	};
-
 	$.ajax({
 		dataType: 'json',
 		url: 'http://booklog.io/1/post',
@@ -12,9 +8,9 @@
 			var html = '';
 
 			posts.forEach(function (post) {
-				html += '<h2>';
+				html += '<div class="alert alert-success">';
 				html += post.subject;
-				html += '</h2>' 
+				html += '</div>' 
 			});
 
 			content.html(html);
