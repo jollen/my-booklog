@@ -61,10 +61,17 @@ userSchema.statics.trunkEmail = function(email) {
   return "###" + email;
 };
 
+var postSchema = new mongoose.Schema({
+    uid: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
+    title: String,
+    content: String
+});
+
 /* integrate into Express framework */
 app.db = {
 	models: {
-		User: mongoose.model('user', userSchema)
+		User: mongoose.model('user', userSchema),
+    Post: mongoose.model('post', postSchema),
 	}
 };
 
