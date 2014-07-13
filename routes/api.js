@@ -66,8 +66,35 @@ exports.createOne = function(req, res){
 
 exports.readAllUsers = function(req, res){
   var model = req.app.db.models.User;
+  var query = req.query;
+  var filter = {};
 
-  model.find({}, function(err, users) {
+  if (typeof(query.age) !== 'undefined') {
+    filter['Age'] = query.age;
+  }
+
+  if (typeof(query.addr) !== 'undefined') {
+    // Escape string for use in regular expression
+    filter['Address'] = new RegExp(query.addr);
+  }
+
+  if (typeof(query.interests) !== 'undefined') {
+    // Escape string for use in regular expression
+    filter['Interests'] = {$in: ['sport']};
+  }
+
+  console.log(filter);
+
+  model
+  .find(filter)
+  .select('Name Email')
+  .sort('Name')
+  .exec(function(err, users) {
+    
+    users.forEach(function(user) {
+      user.Email = model.trunkEmail(user.Email);
+    });
+
     res.send(users);
     res.end();
   });

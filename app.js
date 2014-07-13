@@ -50,8 +50,16 @@ var userSchema = new mongoose.Schema({
     Phone: String,
     Email: String,
     Address: String,
-    Age: { type: Number, default: 0 }
+    Age: { type: Number, default: 0 },
+    Interests: [{ type: String }],
+    Updated: { type: Date, default: Date.now }
 });
+
+userSchema.index({ Address: 1 });
+
+userSchema.statics.trunkEmail = function(email) {
+  return "###" + email;
+};
 
 /* integrate into Express framework */
 app.db = {
