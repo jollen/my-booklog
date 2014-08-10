@@ -16,6 +16,10 @@ exports.readAll = function(req, res) {
   });
 };
 
+exports.readAllUser = function(req, res) {
+
+};
+
 exports.readByUserId = function(req, res) {
   var model = req.app.db.models.User;
   var userId = req.params.userId;
@@ -66,7 +70,7 @@ exports.createOne = function(req, res){
   var post;
 
   post = {
-    uid: '53e6d2e88c55227d75a661f6',
+    uid: query.uid,
     title: query.title,
     content: query.content
   };

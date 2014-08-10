@@ -69,7 +69,7 @@ var postSchema = new mongoose.Schema({
 
 var userTotalSchema = new mongoose.Schema({
     _id: '',
-    total: { type: Number, default: 0}
+    value: { type: Number, default: 0}
 });
 
 /* integrate into Express framework */
