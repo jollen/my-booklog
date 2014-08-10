@@ -67,18 +67,30 @@ var postSchema = new mongoose.Schema({
     content: String
 });
 
+var userTotalSchema = new mongoose.Schema({
+    _id: '',
+    total: { type: Number, default: 0}
+});
+
 /* integrate into Express framework */
 app.db = {
 	models: {
 		User: mongoose.model('user', userSchema),
     Post: mongoose.model('post', postSchema),
+    UserTotal: mongoose.model('userTotal', userTotalSchema),
 	}
 };
 
 // REST APIs
 app.get('/1/post', api.readAll);
+app.get('/1/post/age', api.readByAge);
+app.get('/1/post/age/map', api.readByAgeMapReduce);
+
 app.post('/1/post', api.createOne);
+
 app.get('/1/user', api.readAllUsers);
+// URL Format: /1/user/53e6dab22d635a69c1a8809c
+app.get('/1/user/:userId', api.readByUserId);
 
 http.createServer(app).listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));

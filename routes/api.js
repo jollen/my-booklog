@@ -14,7 +14,50 @@ exports.readAll = function(req, res) {
     res.send(posts);
     res.end();
   });
+};
 
+exports.readByUserId = function(req, res) {
+  var model = req.app.db.models.User;
+  var userId = req.params.userId;
+
+  model
+  .find({ _id: userId })
+  .exec(function(err, user) {
+    res.send(user);
+    res.end();
+  });
+};
+
+/**
+ * GET /1/post/age
+ */
+exports.readByAge = function(req, res) {
+  var model = req.app.db.models.User;
+
+  model
+  .aggregate([
+      { $project: { Age: 1 } },
+      { $match: { $or: [{'Age': 30}, {'Age': 50}] } },
+      { $group: { _id: '$Age', total: { $sum: 1 } } },
+    ])
+  .exec(function(err, users) {
+    res.send(users);
+    res.end();
+  });
+};
+
+exports.readByAgeMapReduce = function(req, res) {
+  var model = req.app.db.models.User;
+
+  model
+  .mapReduce(
+      function() { emit( this.Age ); },
+      function(key, values) { return Array.length(values) },
+      {
+        query: { 'Age': '30' },
+        out: 'userTotals'
+      }
+    );
 };
 
 exports.createOne = function(req, res){
@@ -23,7 +66,7 @@ exports.createOne = function(req, res){
   var post;
 
   post = {
-    uid: '53c1fcc363993b2789650d81',
+    uid: '53e6d2e88c55227d75a661f6',
     title: query.title,
     content: query.content
   };
@@ -60,13 +103,13 @@ exports.readAllUsers = function(req, res){
 
   model
   .find(filter)
-  .select('Name Email')
+  .select('Name Email Age')
   .sort('Name')
   .exec(function(err, users) {
     
-    users.forEach(function(user) {
-      user.Email = model.trunkEmail(user.Email);
-    });
+    //users.forEach(function(user) {
+    //  user.Email = model.trunkEmail(user.Email);
+    //});
 
     res.send(users);
     res.end();
