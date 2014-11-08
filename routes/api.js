@@ -16,10 +16,6 @@ exports.readAll = function(req, res) {
   });
 };
 
-exports.readAllUser = function(req, res) {
-
-};
-
 exports.readByUserId = function(req, res) {
   var model = req.app.db.models.User;
   var userId = req.params.userId;
@@ -81,6 +77,8 @@ exports.createOne = function(req, res){
   var postDocument = new model(post);
   postDocument.save();
 
+  req.app.db.models.User.update({uid: query.uid}, {$set: { postId: query.uid }});
+
   res.send({status: 'OK'});
 };
 
@@ -103,25 +101,40 @@ exports.readAllUsers = function(req, res){
     filter['Interests'] = {$in: ['sport']};
   }
 
-  console.log(filter);
-
   model
   .find(filter)
-  .select('Name Email Age')
+  .populate('postId')
   .sort('Name')
   .exec(function(err, users) {
-    
-    //users.forEach(function(user) {
-    //  user.Email = model.trunkEmail(user.Email);
-    //});
-
-    res.send(users);
-    res.end();
+      res.send(users);
+      res.end();
   });
 };
 
+/*
+ * MapReduce
+ */
 
+exports.readAllUsers_MapReduce = function(req, res){
+  var model = req.app.db.models.User;
 
+  model
+  .aggregate([
+      { $project: { id: 1, Name: 1, Email:1, Address: 1, Age: 1, postId: 1 } },
+      { $group: { _id: '$Age'
+                , total: { $sum: 1 } 
+                , Name: { $last: '$Name'}
+                , Email: { $last: '$Email' }
+                , Age: { $last: '$Age' }
+                , postId: { $last: '$_id' }
+              } 
+      },
+    ])
+  .exec(function(err, users) {
+    res.send(users.populate('postId'));
+    res.end();
+  });
+};
 
 
 

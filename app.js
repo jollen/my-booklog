@@ -52,7 +52,10 @@ var userSchema = new mongoose.Schema({
     Address: String,
     Age: { type: Number, default: 0 },
     Interests: [{ type: String }],
-    Updated: { type: Date, default: Date.now }
+    Updated: { type: Date, default: Date.now },
+
+    /* mapReduce */
+    postsId: { type: mongoose.Schema.Types.ObjectId, ref: 'userPost' },
 });
 
 userSchema.index({ Address: 1 });
@@ -68,7 +71,10 @@ var postSchema = new mongoose.Schema({
 });
 
 var userTotalSchema = new mongoose.Schema({
-    _id: '',
+    value: { type: Number, default: 0}
+});
+
+var userPostSchema = new mongoose.Schema({
     value: { type: Number, default: 0}
 });
 
@@ -77,7 +83,10 @@ app.db = {
 	models: {
 		User: mongoose.model('user', userSchema),
     Post: mongoose.model('post', postSchema),
+
+    /* MapReduce */
     UserTotal: mongoose.model('userTotal', userTotalSchema),
+    UserPost: mongoose.model('userPost', userPostSchema)
 	}
 };
 

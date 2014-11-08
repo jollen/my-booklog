@@ -5,10 +5,10 @@
 
     db.posts.mapReduce(
 		function() { 
-			emit( this.uid, this._id ); 	
+			emit( this.uid, 1 ); 	
 		},
 		function(key, values) { 
-			return values.length;
+			return Array.sum(values);
 		},
 		{
 			out: 'userPosts'
